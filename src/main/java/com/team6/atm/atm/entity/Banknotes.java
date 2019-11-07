@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "banknotes")
-public class Banknotes {
+public class Banknotes implements Comparable<Banknotes> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bill_id")
@@ -28,5 +28,10 @@ public class Banknotes {
     public Banknotes(Long value, Long amount) {
         this.value = value;
         this.amount = amount;
+    }
+
+    @Override
+    public int compareTo(Banknotes o) {
+        return o.getValue().compareTo(this.getValue());
     }
 }
