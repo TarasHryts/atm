@@ -1,13 +1,12 @@
 package com.team6.atm.atm.dto;
 
-import com.team6.atm.atm.dto.BanknotesDto;
 import com.team6.atm.atm.entity.Banknotes;
 
 public class BanknotesDtoUtil {
-    public static Banknotes getBanknotesFromDto(BanknotesDto banknotesDto) {
+    public static Banknotes createBanknotesFromDto(BanknotesDto banknotesDto){
         Banknotes banknotes = new Banknotes();
-        banknotes.setValue((banknotes.getValue()));
-        banknotes.setAmount(banknotes.getAmount());
+        banknotes.setValue(banknotesDto.getValue());
+        banknotes.setAmount(banknotesDto.getAmount());
         return banknotes;
     }
 }

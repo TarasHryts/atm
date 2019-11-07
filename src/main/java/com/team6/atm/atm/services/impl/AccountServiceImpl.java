@@ -14,7 +14,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Optional<Account> getById(Long accountId) {
-        return accountRepository.findById(accountId);
+        return Optional.empty();
     }
 
     @Override

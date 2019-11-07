@@ -10,6 +10,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class BanknotesDto {
+<<<<<<< added-exceptions
+    @NotNull
+    @NotEmpty
+    private Long value;
+
+    @NotNull
+    @NotEmpty
+    private Long amount;
+=======
     @NotEmpty
     @NotNull
     private Long value;
@@ -22,4 +31,5 @@ public class BanknotesDto {
         this.value = value;
         this.amount = amount;
     }
+>>>>>>> master
 }
