@@ -1,5 +1,6 @@
 package com.team6.atm.atm.services.impl;
 
+import com.team6.atm.atm.dto.BanknotesDto;
 import com.team6.atm.atm.entity.Account;
 import com.team6.atm.atm.entity.Atm;
 import com.team6.atm.atm.entity.Banknotes;
@@ -75,7 +76,6 @@ public class AtmServiceImpl implements AtmService {
                         sumOfWithdraw / banknotesList.get(i).getValue()));
                 sumOfWithdraw = sumOfWithdraw % banknotesList.get(i).getValue();
             }
-
         }
         return banknotes;
     }
