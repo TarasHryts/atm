@@ -1,24 +1,38 @@
 package com.team6.atm.atm.services.impl;
 
 import com.team6.atm.atm.entity.Banknotes;
+import com.team6.atm.atm.repository.BanknotesRepository;
 import com.team6.atm.atm.services.BanknotesService;
+
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BanknotesServiceImpl implements BanknotesService {
+
+    @Autowired
+    private BanknotesRepository banknotesRepository;
+
+    @Transactional
     @Override
     public Optional<Banknotes> create(Banknotes banknotes) {
-        return Optional.empty();
+        Banknotes saveBanknotes = banknotesRepository.save(banknotes);
+        return Optional.of(saveBanknotes);
     }
 
+    @Transactional
     @Override
     public Optional<Banknotes> update(Banknotes banknotes) {
-        return Optional.empty();
+        Banknotes newBanknotes = banknotesRepository.save(banknotes);
+        return Optional.of(newBanknotes);
     }
 
+    @Transactional
     @Override
     public void delete(Banknotes banknotes) {
-
+        banknotesRepository.delete(banknotes);
     }
 }

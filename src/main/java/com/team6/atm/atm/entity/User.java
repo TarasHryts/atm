@@ -37,4 +37,5 @@ public class User {
     private Set<Account> accountList = new HashSet<>();
     @ManyToMany
     private Set<Role> roles = new HashSet<>();
+
 }
