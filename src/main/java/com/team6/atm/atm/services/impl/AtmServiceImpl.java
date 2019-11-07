@@ -38,10 +38,9 @@ public class AtmServiceImpl implements AtmService {
     @Transactional
     @Override
     public void withdraw(Atm atm, Account account, Long amount) {
-        //banknotes sorted 500,200,100 ...
+
         List<Banknotes> banknotesList = atm.getBanknotesList()
-                .stream().sorted((b1, b2) -> b2.getValue()
-                        .compareTo(b1.getValue()))
+                .stream().sorted()
                 .collect(Collectors.toList());
         atm.setBanknotesList(takeMoneyFromAtm(banknotesList, amount));
         account.setBalance(account.getBalance() + amount);
