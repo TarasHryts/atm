@@ -34,12 +34,13 @@ public class AtmController {
                         @RequestBody BanknotesDto twoHundred,
                         @RequestBody BanknotesDto fiveHundred) {
         List<Banknotes> banknotes = new ArrayList<>();
-        banknotes.add(BanknotesDtoUtil.getBanknotesFromDto(oneHundred));
-        banknotes.add(BanknotesDtoUtil.getBanknotesFromDto(twoHundred));
-        banknotes.add(BanknotesDtoUtil.getBanknotesFromDto(fiveHundred));
+        banknotes.add(BanknotesDtoUtil.createBanknotesFromDto(oneHundred));
+        banknotes.add(BanknotesDtoUtil.createBanknotesFromDto(twoHundred));
+        banknotes.add(BanknotesDtoUtil.createBanknotesFromDto(fiveHundred));
         Account account = accountService.getById(accountId).orElseThrow(
-                () -> new AccountNotFoundException("Account with ID " + accountId + " not found."));
-        Atm atm = atmService.getAtmById(ATM_ID);
+                () -> new AccountNotFoundException("Account with ID " +
+                        accountId + " not found."));
+        Atm atm = atmService.getAtmById(ATM_ID).orElseThrow();
         atmService.deposit(atm, account, banknotes);
     }
 
@@ -48,7 +49,7 @@ public class AtmController {
                          @RequestParam("amount") Long amount) {
         Account account = accountService.getById(accountId).orElseThrow(
                 () -> new AccountNotFoundException("Account with ID " + accountId + " not found."));
-        Atm atm = atmService.getAtmById(ATM_ID);
+        Atm atm = atmService.getAtmById(ATM_ID).orElseThrow();
         atmService.withdraw(atm, account, amount);
     }
 }

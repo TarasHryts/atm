@@ -1,6 +1,8 @@
 package com.team6.atm.atm.controller;
 
+import com.team6.atm.atm.dto.BanknotesDtoUtil;
 import com.team6.atm.atm.dto.UserDto;
+import com.team6.atm.atm.dto.UserDtoUtil;
 import com.team6.atm.atm.entity.User;
 import com.team6.atm.atm.exception.UserNotFoundException;
 import com.team6.atm.atm.services.UserService;
@@ -23,7 +25,7 @@ public class UserController {
 
     @PostMapping("/add")
     public void add(@RequestBody UserDto userDto) {
-        userService.add(userDto);
+        userService.create(UserDtoUtil.createUserFromDto(userDto));
     }
 
     @GetMapping("/all")
