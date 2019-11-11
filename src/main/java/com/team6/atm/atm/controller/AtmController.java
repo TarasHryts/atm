@@ -1,7 +1,7 @@
 package com.team6.atm.atm.controller;
 
 import com.team6.atm.atm.dto.BanknotesDto;
-import com.team6.atm.atm.dto.BanknotesDtoUtil;
+import com.team6.atm.atm.dto.util.BanknotesDtoUtil;
 import com.team6.atm.atm.entity.Account;
 import com.team6.atm.atm.entity.Atm;
 import com.team6.atm.atm.entity.Banknotes;
@@ -38,8 +38,8 @@ public class AtmController {
         banknotes.add(BanknotesDtoUtil.createBanknotesFromDto(twoHundred));
         banknotes.add(BanknotesDtoUtil.createBanknotesFromDto(fiveHundred));
         Account account = accountService.getById(accountId).orElseThrow(
-                () -> new AccountNotFoundException("Account with ID " +
-                        accountId + " not found."));
+                () -> new AccountNotFoundException("Account with ID "
+                        + accountId + " not found."));
         Atm atm = atmService.getAtmById(ATM_ID).orElseThrow();
         atmService.deposit(atm, account, banknotes);
     }

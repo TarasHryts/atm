@@ -21,7 +21,14 @@ public class AtmServiceImpl implements AtmService {
     @Autowired
     private AccountRepository accountRepository;
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
+    @Override
+    public Optional<Atm> create(Atm atm) {
+        Atm atmTemp = atmRepository.save(atm);
+        return Optional.of(atmTemp);
+    }
+
+    @Transactional
     @Override
     public void deposit(Atm atm, Account account, List<Banknotes> banknotes) {
         Long sum = 0L;

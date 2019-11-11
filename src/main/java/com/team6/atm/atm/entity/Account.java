@@ -31,4 +31,9 @@ public class Account {
     private Long balance;
     @Column(name = "pin")
     private String pin;
+
+    public Account(User user, String pin) {
+        this.user = user;
+        this.pin = pin;
+    }
 }

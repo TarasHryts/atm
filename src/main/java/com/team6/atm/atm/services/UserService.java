@@ -7,9 +7,13 @@ import java.util.Optional;
 
 public interface UserService {
     Optional<User> create(User user);
+
     Optional<User> update(Long userId, UserDto userDto);
+
     void delete(User user);
+
     Optional<User> getUserById(Long userId);
+
     List<User> getAllUsers();
 
 }

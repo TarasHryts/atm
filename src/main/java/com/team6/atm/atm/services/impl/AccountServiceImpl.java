@@ -32,7 +32,7 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.delete(account);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     @Override
     public void transfer(Account fromAccount, Account toAccount, Long amount) {
         fromAccount.setBalance(fromAccount.getBalance() - amount);

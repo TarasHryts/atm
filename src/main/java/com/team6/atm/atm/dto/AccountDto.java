@@ -1,5 +1,6 @@
 package com.team6.atm.atm.dto;
 
+import com.team6.atm.atm.entity.User;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,11 +12,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BanknotesDto {
+public class AccountDto {
     @NotNull
     @NotEmpty
-    private Long value;
+    private User user;
     @NotNull
     @NotEmpty
-    private Long amount;
+    private Long balance;
+    @NotNull
+    @NotEmpty
+    private String pin;
 }

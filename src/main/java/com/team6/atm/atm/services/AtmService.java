@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AtmService {
+    Optional<Atm> create(Atm atm);
+
     void deposit(Atm atm, Account account, List<Banknotes> banknotes);
 
     void withdraw(Atm atm, Account account, Long amount);
