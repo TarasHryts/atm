@@ -20,14 +20,14 @@ public class BanknotesServiceImpl implements BanknotesService {
     @Override
     public Optional<Banknotes> create(Banknotes banknotes) {
         Banknotes saveBanknotes = banknotesRepository.save(banknotes);
-        return Optional.of(saveBanknotes);
+        return Optional.ofNullable(saveBanknotes);
     }
 
     @Transactional
     @Override
     public Optional<Banknotes> update(Banknotes banknotes) {
         Banknotes newBanknotes = banknotesRepository.save(banknotes);
-        return Optional.of(newBanknotes);
+        return Optional.ofNullable(newBanknotes);
     }
 
     @Transactional
