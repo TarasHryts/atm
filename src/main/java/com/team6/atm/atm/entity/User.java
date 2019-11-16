@@ -15,7 +15,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,7 +37,11 @@ public class User {
     @Column(name = "password")
     @NotNull
     private String password;
-    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @OneToMany(orphanRemoval = true)
+    @JoinTable(name = "users_accounts",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id",
+                    referencedColumnName = "account_id"))
     private Set<Account> accountList = new HashSet<>();
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
@@ -46,4 +49,8 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    public User(String email, @NotNull String password) {
+        this.email = email;
+        this.password = password;
+    }
 }

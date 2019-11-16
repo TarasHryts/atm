@@ -11,11 +11,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BanknotesDto {
+public class AccountDto {
     @NotNull
     @NotEmpty
-    private Long value;
+    private Long balance;
     @NotNull
     @NotEmpty
-    private Long amount;
+    private String pin;
 }

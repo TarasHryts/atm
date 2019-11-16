@@ -5,6 +5,8 @@ import java.util.Optional;
 
 public interface BanknotesService {
     Optional<Banknotes> create(Banknotes banknotes);
+
     Optional<Banknotes> update(Banknotes banknotes);
+
     void delete(Banknotes banknotes);
 }

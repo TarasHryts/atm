@@ -1,10 +1,12 @@
 package com.team6.atm.atm.controller;
 
 import com.team6.atm.atm.dto.UserDto;
+import com.team6.atm.atm.dto.util.UserDtoUtil;
 import com.team6.atm.atm.entity.User;
 import com.team6.atm.atm.exception.UserNotFoundException;
 import com.team6.atm.atm.services.UserService;
 import java.util.List;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +24,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/add")
-    public void add(@RequestBody UserDto userDto) {
-        userService.add(userDto);
+    public void add(@Valid @RequestBody UserDto userDto) {
+        userService.create(UserDtoUtil.createUserFromDto(userDto));
     }
 
     @GetMapping("/all")

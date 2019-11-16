@@ -1,9 +1,15 @@
 package com.team6.atm.atm.controller;
 
+import com.team6.atm.atm.dto.AccountDto;
+import com.team6.atm.atm.dto.util.AccountDtoUtil;
 import com.team6.atm.atm.entity.Account;
+import com.team6.atm.atm.entity.User;
 import com.team6.atm.atm.exception.AccountNotFoundException;
 import com.team6.atm.atm.services.AccountService;
+import com.team6.atm.atm.services.UserService;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,10 +26,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private AccountDtoUtil accountDtoUtil;
 
     @PostMapping("/add")
-    public void add(@RequestBody Account account) {
+    public void add(@RequestParam("userId") Long userId, @RequestBody AccountDto accountDto) {
+        Account account = accountDtoUtil.createAccountFromDto(accountDto);
         accountService.create(account);
+        User user = userService.getUserById(userId).orElseThrow();
+        Set<Account> accountList = user.getAccountList();
+        accountList.add(account);
+        user.setAccountList(accountList);
     }
 
     @GetMapping("/{accountId}")
@@ -55,5 +70,10 @@ public class AccountController {
     @DeleteMapping("/{accountId}")
     public void delete(@PathVariable("accountId") Long accountId) {
         accountService.delete(getById(accountId));
+    }
+
+    @GetMapping("/all")
+    public List<Account> getAllAccounts() {
+        return accountService.getAllAccounts();
     }
 }

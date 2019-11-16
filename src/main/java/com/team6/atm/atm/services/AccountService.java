@@ -1,12 +1,19 @@
 package com.team6.atm.atm.services;
 
 import com.team6.atm.atm.entity.Account;
+import java.util.List;
 import java.util.Optional;
 
 public interface AccountService {
+    List<Account> getAllAccounts();
+
     Optional<Account> getById(Long accountId);
+
     Optional<Account> create(Account account);
+
     void delete(Account account);
+
     void transfer(Account fromAccount, Account toAccount, Long amount);
-    Optional<Account> update(Account account);
+
+    Optional<Account> update(Long accountId, Account account);
 }

@@ -1,18 +1,20 @@
 package com.team6.atm.atm.services.impl;
 
-import com.team6.atm.atm.dto.BanknotesDto;
 import com.team6.atm.atm.entity.Account;
 import com.team6.atm.atm.entity.Atm;
 import com.team6.atm.atm.entity.Banknotes;
+import com.team6.atm.atm.exception.IncorrectAmountException;
+import com.team6.atm.atm.exception.NotEnoughMoneyException;
+import com.team6.atm.atm.exception.NotEnoughMoneyInAtmException;
 import com.team6.atm.atm.repository.AccountRepository;
 import com.team6.atm.atm.repository.AtmRepository;
 import com.team6.atm.atm.services.AtmService;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +25,18 @@ public class AtmServiceImpl implements AtmService {
     @Autowired
     private AccountRepository accountRepository;
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
+    @Override
+    public Optional<Atm> create(Atm atm) {
+        try {
+            atm = atmRepository.save(atm);
+        } catch (DataAccessException e) {
+            System.out.println(e);
+        }
+        return Optional.ofNullable(atm);
+    }
+
+    @Transactional
     @Override
     public void deposit(Atm atm, Account account, List<Banknotes> banknotes) {
         Long sum = 0L;
@@ -36,18 +49,24 @@ public class AtmServiceImpl implements AtmService {
         atm.setBanknotesList(addBanknotes);
         atmRepository.save(atm);
     }
+
     @Transactional
     @Override
     public void withdraw(Atm atm, Account account, Long amount) {
-
         List<Banknotes> banknotesList = atm.getBanknotesList()
                 .stream().sorted()
                 .collect(Collectors.toList());
         atm.setBanknotesList(takeMoneyFromAtm(banknotesList, amount));
-        account.setBalance(account.getBalance() + amount);
+        account.setBalance(account.getBalance() - amount);
         atmRepository.save(atm);
         accountRepository.save(account);
 
+    }
+
+    @Transactional
+    @Override
+    public Optional<Atm> getAtmById(Long atmId) {
+        return atmRepository.findById(atmId);
     }
 
     private List<Banknotes> addBanknotes(
@@ -62,9 +81,9 @@ public class AtmServiceImpl implements AtmService {
         return banknotesListInAtm;
     }
 
-    private List<Banknotes> takeMoneyFromAtm(List<Banknotes> banknotesList, Long sumOfWithdraw) {
+    @Transactional
+    List<Banknotes> takeMoneyFromAtm(List<Banknotes> banknotesList, Long sumOfWithdraw) {
         List<Banknotes> banknotes = new ArrayList<>();
-
         for (int i = 0; i < banknotesList.size(); i++) {
             if (sumOfWithdraw / banknotesList.get(i).getValue() > banknotesList.get(i)
                     .getAmount()) {
@@ -73,10 +92,15 @@ public class AtmServiceImpl implements AtmService {
                 banknotes.add(new Banknotes(banknotesList.get(i).getValue(), 0L));
             } else {
                 banknotes.add(new Banknotes(banknotesList.get(i).getValue(),
-                        sumOfWithdraw / banknotesList.get(i).getValue()));
+                        banknotesList.get(i).getAmount()
+                                - sumOfWithdraw / banknotesList.get(i).getValue()));
                 sumOfWithdraw = sumOfWithdraw % banknotesList.get(i).getValue();
             }
         }
         return banknotes;
+    }
+    @Override
+    public Long sumOfMoneyInList(List<Banknotes> banknotes) {
+        return banknotes.stream().mapToLong(x -> x.getAmount() * x.getValue()).sum();
     }
 }
