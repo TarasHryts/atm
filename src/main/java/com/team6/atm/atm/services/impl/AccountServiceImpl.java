@@ -3,6 +3,7 @@ package com.team6.atm.atm.services.impl;
 import com.team6.atm.atm.entity.Account;
 import com.team6.atm.atm.repository.AccountRepository;
 import com.team6.atm.atm.services.AccountService;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,16 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Transactional
+    @Override
+    public List<Account> getAllAccounts() {
+        return accountRepository.findAll();
+    }
+
     @Transactional(readOnly = true)
     @Override
     public Optional<Account> getById(Long accountId) {
-        return Optional.empty();
+        return accountRepository.findById(accountId);
     }
 
     @Transactional

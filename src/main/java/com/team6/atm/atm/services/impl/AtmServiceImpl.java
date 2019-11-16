@@ -3,6 +3,9 @@ package com.team6.atm.atm.services.impl;
 import com.team6.atm.atm.entity.Account;
 import com.team6.atm.atm.entity.Atm;
 import com.team6.atm.atm.entity.Banknotes;
+import com.team6.atm.atm.exception.IncorrectAmountException;
+import com.team6.atm.atm.exception.NotEnoughMoneyException;
+import com.team6.atm.atm.exception.NotEnoughMoneyInAtmException;
 import com.team6.atm.atm.repository.AccountRepository;
 import com.team6.atm.atm.repository.AtmRepository;
 import com.team6.atm.atm.services.AtmService;
@@ -11,11 +14,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AtmServiceImpl implements AtmService {
+    private static final Long SMALLEST_DENOMINATION = 100L;
     @Autowired
     private AtmRepository atmRepository;
     @Autowired
@@ -24,8 +29,12 @@ public class AtmServiceImpl implements AtmService {
     @Transactional
     @Override
     public Optional<Atm> create(Atm atm) {
-        Atm atmTemp = atmRepository.save(atm);
-        return Optional.of(atmTemp);
+        try {
+            atm = atmRepository.save(atm);
+        } catch (DataAccessException e) {
+            System.out.println(e);
+        }
+        return Optional.ofNullable(atm);
     }
 
     @Transactional
@@ -45,17 +54,27 @@ public class AtmServiceImpl implements AtmService {
     @Transactional
     @Override
     public void withdraw(Atm atm, Account account, Long amount) {
-
+        if (account.getBalance() < amount) {
+            throw new NotEnoughMoneyException("Not enough money in your account");
+        }
+        if (sumOfMoneyInList(atm.getBanknotesList()) < amount) {
+            throw new NotEnoughMoneyInAtmException("Not enough money in ATM");
+        }
+        if (amount % SMALLEST_DENOMINATION != 0) {
+            throw new IncorrectAmountException("Еhe amount should be divided by "
+                    + SMALLEST_DENOMINATION);
+        }
         List<Banknotes> banknotesList = atm.getBanknotesList()
                 .stream().sorted()
                 .collect(Collectors.toList());
         atm.setBanknotesList(takeMoneyFromAtm(banknotesList, amount));
-        account.setBalance(account.getBalance() + amount);
+        account.setBalance(account.getBalance() - amount);
         atmRepository.save(atm);
         accountRepository.save(account);
 
     }
 
+    @Transactional
     @Override
     public Optional<Atm> getAtmById(Long atmId) {
         return atmRepository.findById(atmId);
@@ -73,9 +92,9 @@ public class AtmServiceImpl implements AtmService {
         return banknotesListInAtm;
     }
 
-    private List<Banknotes> takeMoneyFromAtm(List<Banknotes> banknotesList, Long sumOfWithdraw) {
+    @Transactional
+    List<Banknotes> takeMoneyFromAtm(List<Banknotes> banknotesList, Long sumOfWithdraw) {
         List<Banknotes> banknotes = new ArrayList<>();
-
         for (int i = 0; i < banknotesList.size(); i++) {
             if (sumOfWithdraw / banknotesList.get(i).getValue() > banknotesList.get(i)
                     .getAmount()) {
@@ -84,10 +103,15 @@ public class AtmServiceImpl implements AtmService {
                 banknotes.add(new Banknotes(banknotesList.get(i).getValue(), 0L));
             } else {
                 banknotes.add(new Banknotes(banknotesList.get(i).getValue(),
-                        sumOfWithdraw / banknotesList.get(i).getValue()));
+                        banknotesList.get(i).getAmount()
+                                - sumOfWithdraw / banknotesList.get(i).getValue()));
                 sumOfWithdraw = sumOfWithdraw % banknotesList.get(i).getValue();
             }
         }
         return banknotes;
+    }
+
+    Long sumOfMoneyInList(List<Banknotes> banknotes) {
+        return banknotes.stream().mapToLong(x -> x.getAmount() * x.getValue()).sum();
     }
 }

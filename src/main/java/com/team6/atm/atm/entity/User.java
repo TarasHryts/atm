@@ -37,7 +37,11 @@ public class User {
     @Column(name = "password")
     @NotNull
     private String password;
-    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @OneToMany(orphanRemoval = true)
+    @JoinTable(name = "users_accounts",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id",
+                    referencedColumnName = "account_id"))
     private Set<Account> accountList = new HashSet<>();
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",

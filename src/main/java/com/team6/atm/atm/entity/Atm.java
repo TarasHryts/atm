@@ -4,7 +4,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +25,7 @@ public class Atm {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "atm_id")
     private Long atmId;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "atm_banknotes",
             joinColumns = @JoinColumn(name = "atm_id", referencedColumnName = "atm_id"),
             inverseJoinColumns = @JoinColumn(name = "bill_id", referencedColumnName = "bill_id"))
