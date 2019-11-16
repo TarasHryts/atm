@@ -8,6 +8,9 @@ import com.team6.atm.atm.entity.Account;
 import com.team6.atm.atm.entity.Atm;
 import com.team6.atm.atm.entity.Banknotes;
 import com.team6.atm.atm.exception.AccountNotFoundException;
+import com.team6.atm.atm.exception.IncorrectAmountException;
+import com.team6.atm.atm.exception.NotEnoughMoneyException;
+import com.team6.atm.atm.exception.NotEnoughMoneyInAtmException;
 import com.team6.atm.atm.services.AccountService;
 import com.team6.atm.atm.services.AtmService;
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/atm")
 public class AtmController {
+    private static final Long SMALLEST_DENOMINATION = 100L;
     @Autowired
     private AtmService atmService;
 
@@ -71,6 +75,16 @@ public class AtmController {
         Account account = accountService.getById(accountId).orElseThrow(
                 () -> new AccountNotFoundException("Account with ID " + accountId + " not found."));
         Atm atm = atmService.getAtmById(atmId).orElseThrow();
+        if (account.getBalance() < amount) {
+            throw new NotEnoughMoneyException("Not enough money in your account");
+        }
+        if (atmService.sumOfMoneyInList(atm.getBanknotesList()) < amount) {
+            throw new NotEnoughMoneyInAtmException("Not enough money in ATM");
+        }
+        if (amount % SMALLEST_DENOMINATION != 0) {
+            throw new IncorrectAmountException("Еhe amount should be divided by "
+                    + SMALLEST_DENOMINATION);
+        }
         atmService.withdraw(atm, account, amount);
     }
 }

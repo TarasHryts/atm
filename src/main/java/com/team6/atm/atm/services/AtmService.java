@@ -14,4 +14,6 @@ public interface AtmService {
     void withdraw(Atm atm, Account account, Long amount);
 
     Optional<Atm> getAtmById(Long atmId);
+
+    Long sumOfMoneyInList(List<Banknotes> banknotes);
 }

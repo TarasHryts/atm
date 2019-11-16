@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AtmServiceImpl implements AtmService {
-    private static final Long SMALLEST_DENOMINATION = 100L;
     @Autowired
     private AtmRepository atmRepository;
     @Autowired
@@ -54,16 +53,6 @@ public class AtmServiceImpl implements AtmService {
     @Transactional
     @Override
     public void withdraw(Atm atm, Account account, Long amount) {
-        if (account.getBalance() < amount) {
-            throw new NotEnoughMoneyException("Not enough money in your account");
-        }
-        if (sumOfMoneyInList(atm.getBanknotesList()) < amount) {
-            throw new NotEnoughMoneyInAtmException("Not enough money in ATM");
-        }
-        if (amount % SMALLEST_DENOMINATION != 0) {
-            throw new IncorrectAmountException("Еhe amount should be divided by "
-                    + SMALLEST_DENOMINATION);
-        }
         List<Banknotes> banknotesList = atm.getBanknotesList()
                 .stream().sorted()
                 .collect(Collectors.toList());
@@ -110,8 +99,8 @@ public class AtmServiceImpl implements AtmService {
         }
         return banknotes;
     }
-
-    Long sumOfMoneyInList(List<Banknotes> banknotes) {
+    @Override
+    public Long sumOfMoneyInList(List<Banknotes> banknotes) {
         return banknotes.stream().mapToLong(x -> x.getAmount() * x.getValue()).sum();
     }
 }
