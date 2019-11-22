@@ -54,6 +54,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void transfer(Account fromAccount, Account toAccount, Long amount) {
         logger.info(this.getClass().getName() + " transfer money");
+
         if (fromAccount == null || toAccount == null) {
             throw new AccountNotFoundException("Account not found.");
         }

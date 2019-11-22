@@ -10,6 +10,11 @@ import com.team6.atm.atm.entity.Banknotes;
 import com.team6.atm.atm.exception.AccountNotFoundException;
 import com.team6.atm.atm.services.AccountService;
 import com.team6.atm.atm.services.AtmService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/atm")
+@Api(value = "ATM", description = "Operations")
 public class AtmController {
     @Autowired
     private AtmService atmService;
@@ -27,12 +33,34 @@ public class AtmController {
     @Autowired
     private AccountService accountService;
 
+    @ApiOperation(value = "add", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Successfully retrieved list"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404,
+                    message = "The resource you were trying to reach is not found")
+    })
     @PostMapping("/add")
     public void createAtm(@RequestBody List<Banknotes> banknotes) {
         Atm atm = AtmDtoUtil.createAtmFromDto(new AtmDto(banknotes));
         atmService.create(atm);
     }
 
+    @ApiOperation(value = "deposit", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Successfully retrieved list"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404,
+                    message = "The resource you were trying to reach is not found")
+    })
     @PostMapping("/deposit")
     public void deposit(@Valid @RequestBody DepositMoneyInAtmDto depositMoneyInAtmDto) {
         Account account = accountService.getById(depositMoneyInAtmDto.getAccountId()).orElseThrow(
@@ -41,6 +69,16 @@ public class AtmController {
         atmService.deposit(atm, account, depositMoneyInAtmDto.getBanknotesList());
     }
 
+    @ApiOperation(value = "withdraw", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Successfully retrieved list"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     @PostMapping("/withdraw")
     public void withdraw(@Valid @RequestBody WithdrawMoneyDto withdrawMoneyDto) {
         Account account = accountService.getById(withdrawMoneyDto.getAccountId()).orElseThrow(
