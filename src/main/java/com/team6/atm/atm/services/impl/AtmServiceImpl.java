@@ -3,9 +3,6 @@ package com.team6.atm.atm.services.impl;
 import com.team6.atm.atm.entity.Account;
 import com.team6.atm.atm.entity.Atm;
 import com.team6.atm.atm.entity.Banknotes;
-import com.team6.atm.atm.exception.IncorrectAmountException;
-import com.team6.atm.atm.exception.NotEnoughMoneyException;
-import com.team6.atm.atm.exception.NotEnoughMoneyInAtmException;
 import com.team6.atm.atm.repository.AccountRepository;
 import com.team6.atm.atm.repository.AtmRepository;
 import com.team6.atm.atm.repository.BanknotesRepository;
@@ -69,16 +66,6 @@ public class AtmServiceImpl implements AtmService {
     @Override
     public void withdraw(Atm atm, Account account, Long amount) {
         logger.info(this.getClass().getName() + " account withdraw money");
-        if (account.getBalance() < amount) {
-            throw new NotEnoughMoneyException("Not enough money in your account");
-        }
-        if (sumOfMoneyInList(atm.getBanknotesList()) < amount) {
-            throw new NotEnoughMoneyInAtmException("Not enough money in ATM");
-        }
-        if (amount % SMALLEST_DENOMINATION != 0) {
-            throw new IncorrectAmountException("Еhe amount should be divided by "
-                    + SMALLEST_DENOMINATION);
-        }
         List<Banknotes> banknotesList = atm.getBanknotesList()
                 .stream().sorted()
                 .collect(Collectors.toList());
