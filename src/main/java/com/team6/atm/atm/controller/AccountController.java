@@ -1,12 +1,16 @@
 package com.team6.atm.atm.controller;
 
 import com.team6.atm.atm.dto.AccountDto;
+import com.team6.atm.atm.dto.TransferDto;
 import com.team6.atm.atm.dto.util.AccountDtoUtil;
 import com.team6.atm.atm.entity.Account;
 import com.team6.atm.atm.entity.User;
 import com.team6.atm.atm.exception.AccountNotFoundException;
 import com.team6.atm.atm.services.AccountService;
 import com.team6.atm.atm.services.UserService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,6 +36,17 @@ public class AccountController {
     private AccountDtoUtil accountDtoUtil;
 
     @PostMapping("/add")
+    @ApiOperation(value = "add", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Successfully retrieved list"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404,
+                    message = "The resource you were trying to reach is not found")
+    })
     public void add(@RequestParam("userId") Long userId, @RequestBody AccountDto accountDto) {
         Account account = accountDtoUtil.createAccountFromDto(accountDto);
         accountService.create(account);
@@ -39,15 +54,38 @@ public class AccountController {
         Set<Account> accountList = user.getAccountList();
         accountList.add(account);
         user.setAccountList(accountList);
+        userService.update(userId, user);
     }
 
     @GetMapping("/{accountId}")
+    @ApiOperation(value = "accountId", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Successfully retrieved list"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404,
+                    message = "The resource you were trying to reach is not found")
+    })
     public Account getById(@PathVariable("accountId") Long accountId) {
         return accountService.getById(accountId).orElseThrow(
                 () -> new AccountNotFoundException("Account with ID " + accountId + " not found."));
     }
 
     @PutMapping("/{accountId}")
+    @ApiOperation(value = "accountId", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Successfully retrieved list"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404,
+                    message = "The resource you were trying to reach is not found")
+    })
     public Account update(@PathVariable("accountId") Long accountId,
                           @RequestBody Account newAccount) {
         return accountService.update(accountId, newAccount).orElseThrow(
@@ -55,24 +93,51 @@ public class AccountController {
     }
 
     @PostMapping("/transfer")
-    public void transfer(@RequestParam("from_account_id") Long fromAccountId,
-                         @RequestParam("to_account_id") Long toAccountId,
-                         @RequestParam("amount") Long amount) {
-        Optional<Account> fromAccount = accountService.getById(fromAccountId);
-        Optional<Account> toAccount = accountService.getById(toAccountId);
-        if (fromAccount.isPresent() && toAccount.isPresent()) {
-            accountService.transfer(fromAccount.get(), toAccount.get(), amount);
-        } else {
-            throw new AccountNotFoundException("Account not found.");
-        }
-    }
+    @ApiOperation(value = "transfer", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Successfully retrieved list"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404,
+                    message = "The resource you were trying to reach is not found")
+    })
+    public void transfer(@RequestBody TransferDto transferDto) {
+        Optional<Account> fromAccount = accountService.getById(transferDto.getFromAccount());
+        Optional<Account> toAccount = accountService.getById(transferDto.getToAccount());
+        accountService.transfer(fromAccount.get(), toAccount.get(), transferDto.getAmount());
+   }
 
     @DeleteMapping("/{accountId}")
+    @ApiOperation(value = "accountId", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Successfully retrieved list"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404,
+                    message = "The resource you were trying to reach is not found")
+    })
     public void delete(@PathVariable("accountId") Long accountId) {
         accountService.delete(getById(accountId));
     }
 
     @GetMapping("/all")
+    @ApiOperation(value = "all", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Successfully retrieved list"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404,
+                    message = "The resource you were trying to reach is not found")
+    })
     public List<Account> getAllAccounts() {
         return accountService.getAllAccounts();
     }
