@@ -10,6 +10,8 @@ public interface UserService {
 
     Optional<User> update(Long userId, UserDto userDto);
 
+    Optional<User> update(Long userId, User user);
+
     void delete(User user);
 
     Optional<User> getUserById(Long userId);

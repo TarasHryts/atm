@@ -40,6 +40,13 @@ public class UserServiceImpl implements UserService {
         return Optional.of(newUser);
     }
 
+    @Override
+    public Optional<User> update(Long userId, User user) {
+        user.setUserId(userId);
+        userRepository.saveAndFlush(user);
+        return Optional.of(user);
+    }
+
     @Transactional
     @Override
     public void delete(User user) {

@@ -1,6 +1,7 @@
 package com.team6.atm.atm.services.impl;
 
 import com.team6.atm.atm.entity.Account;
+import com.team6.atm.atm.exception.AccountNotFoundException;
 import com.team6.atm.atm.repository.AccountRepository;
 import com.team6.atm.atm.services.AccountService;
 import java.util.List;
@@ -53,6 +54,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void transfer(Account fromAccount, Account toAccount, Long amount) {
         logger.info(this.getClass().getName() + " transfer money");
+        if (fromAccount == null || toAccount == null) {
+            throw new AccountNotFoundException("Account not found.");
+        }
         fromAccount.setBalance(fromAccount.getBalance() - amount);
         accountRepository.saveAndFlush(fromAccount);
         toAccount.setBalance(toAccount.getBalance() + amount);
