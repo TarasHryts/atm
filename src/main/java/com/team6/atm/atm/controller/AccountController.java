@@ -1,6 +1,7 @@
 package com.team6.atm.atm.controller;
 
 import com.team6.atm.atm.dto.AccountDto;
+import com.team6.atm.atm.dto.TransferDto;
 import com.team6.atm.atm.dto.util.AccountDtoUtil;
 import com.team6.atm.atm.entity.Account;
 import com.team6.atm.atm.entity.User;
@@ -53,6 +54,7 @@ public class AccountController {
         Set<Account> accountList = user.getAccountList();
         accountList.add(account);
         user.setAccountList(accountList);
+        userService.update(userId, user);
     }
 
     @GetMapping("/{accountId}")
@@ -102,17 +104,11 @@ public class AccountController {
             @ApiResponse(code = 404,
                     message = "The resource you were trying to reach is not found")
     })
-    public void transfer(@RequestParam("from_account_id") Long fromAccountId,
-                         @RequestParam("to_account_id") Long toAccountId,
-                         @RequestParam("amount") Long amount) {
-        Optional<Account> fromAccount = accountService.getById(fromAccountId);
-        Optional<Account> toAccount = accountService.getById(toAccountId);
-        if (fromAccount.isPresent() && toAccount.isPresent()) {
-            accountService.transfer(fromAccount.get(), toAccount.get(), amount);
-        } else {
-            throw new AccountNotFoundException("Account not found.");
-        }
-    }
+    public void transfer(@RequestBody TransferDto transferDto) {
+        Optional<Account> fromAccount = accountService.getById(transferDto.getFromAccount());
+        Optional<Account> toAccount = accountService.getById(transferDto.getToAccount());
+        accountService.transfer(fromAccount.get(), toAccount.get(), transferDto.getAmount());
+   }
 
     @DeleteMapping("/{accountId}")
     @ApiOperation(value = "accountId", response = List.class)

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AtmServiceImpl implements AtmService {
     private static final Logger logger = Logger.getLogger(AtmServiceImpl.class);
+    private static final Long SMALLEST_DENOMINATION = 100L;
     @Autowired
     private final AtmRepository atmRepository;
     @Autowired
@@ -65,6 +66,16 @@ public class AtmServiceImpl implements AtmService {
     @Override
     public void withdraw(Atm atm, Account account, Long amount) {
         logger.info(this.getClass().getName() + " account withdraw money");
+        if (account.getBalance() < amount) {
+            throw new NotEnoughMoneyException("Not enough money in your account");
+        }
+        if (sumOfMoneyInList(atm.getBanknotesList()) < amount) {
+            throw new NotEnoughMoneyInAtmException("Not enough money in ATM");
+        }
+        if (amount % SMALLEST_DENOMINATION != 0) {
+            throw new IncorrectAmountException("Еhe amount should be divided by "
+                    + SMALLEST_DENOMINATION);
+        }
         List<Banknotes> banknotesList = atm.getBanknotesList()
                 .stream().sorted()
                 .collect(Collectors.toList());
@@ -72,7 +83,6 @@ public class AtmServiceImpl implements AtmService {
         account.setBalance(account.getBalance() - amount);
         atmRepository.save(atm);
         accountRepository.save(account);
-
     }
 
     @Transactional
@@ -94,7 +104,6 @@ public class AtmServiceImpl implements AtmService {
         return banknotesListInAtm;
     }
 
-    @Transactional
     List<Banknotes> takeMoneyFromAtm(List<Banknotes> banknotesList, Long sumOfWithdraw) {
         List<Banknotes> banknotes = new ArrayList<>();
         for (int i = 0; i < banknotesList.size(); i++) {
@@ -113,8 +122,6 @@ public class AtmServiceImpl implements AtmService {
         return banknotes;
     }
 
-    @Transactional
-    @Override
     public Long sumOfMoneyInList(List<Banknotes> banknotes) {
         logger.info(this.getClass().getName() + " count sum of money in list");
         return banknotes.stream().mapToLong(x -> x.getAmount() * x.getValue()).sum();
