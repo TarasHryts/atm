@@ -3,6 +3,9 @@ package com.team6.atm.atm.services.impl;
 import com.team6.atm.atm.entity.Account;
 import com.team6.atm.atm.entity.Atm;
 import com.team6.atm.atm.entity.Banknotes;
+import com.team6.atm.atm.exception.IncorrectAmountException;
+import com.team6.atm.atm.exception.NotEnoughMoneyException;
+import com.team6.atm.atm.exception.NotEnoughMoneyInAtmException;
 import com.team6.atm.atm.repository.AccountRepository;
 import com.team6.atm.atm.repository.AtmRepository;
 import com.team6.atm.atm.repository.BanknotesRepository;
@@ -42,7 +45,7 @@ public class AtmServiceImpl implements AtmService {
         try {
             atm = atmRepository.save(atm);
         } catch (DataAccessException e) {
-            System.out.println(e);
+            logger.error(e);
         }
         return Optional.ofNullable(atm);
     }

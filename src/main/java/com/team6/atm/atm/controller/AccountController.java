@@ -108,7 +108,7 @@ public class AccountController {
         Optional<Account> fromAccount = accountService.getById(transferDto.getFromAccount());
         Optional<Account> toAccount = accountService.getById(transferDto.getToAccount());
         accountService.transfer(fromAccount.get(), toAccount.get(), transferDto.getAmount());
-   }
+    }
 
     @DeleteMapping("/{accountId}")
     @ApiOperation(value = "accountId", response = List.class)
