@@ -45,7 +45,7 @@ public class AtmServiceImpl implements AtmService {
         try {
             atm = atmRepository.save(atm);
         } catch (DataAccessException e) {
-            System.out.println(e);
+            logger.error(e);
         }
         return Optional.ofNullable(atm);
     }
