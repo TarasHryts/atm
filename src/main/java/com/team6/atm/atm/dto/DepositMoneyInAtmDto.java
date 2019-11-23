@@ -1,6 +1,5 @@
 package com.team6.atm.atm.dto;
 
-import com.team6.atm.atm.entity.Banknotes;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -18,5 +17,5 @@ public class DepositMoneyInAtmDto {
     @NotNull
     @NotEmpty
     private Long atmId;
-    private List<Banknotes> banknotesList;
+    private List<BanknotesDto> banknotesList;
 }
