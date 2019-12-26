@@ -25,16 +25,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataInitializer {
-    @Autowired
     private UserService userService;
-    @Autowired
     private AccountService accountService;
-    @Autowired
     private BanknotesService banknotesService;
-    @Autowired
     private AtmService atmService;
+
     @Autowired
-    private AccountDtoUtil accountDtoUtil;
+    public DataInitializer(UserService userService, AccountService accountService,
+                           BanknotesService banknotesService, AtmService atmService) {
+        this.userService = userService;
+        this.accountService = accountService;
+        this.banknotesService = banknotesService;
+        this.atmService = atmService;
+    }
 
     @PostConstruct
     public void initializeData() {
@@ -45,7 +48,7 @@ public class DataInitializer {
         User userPetro = UserDtoUtil
                 .createUserFromDto(new UserDto("Petro", "kjk@kj.jdd", "1", "1"));
         userService.create(userPetro);
-        Account account = accountDtoUtil.createAccountFromDto(new AccountDto(10000L, "1111"));
+        Account account = AccountDtoUtil.createAccountFromDto(new AccountDto(10000L, "1111"));
         Set<Account> userPetroAccountList = userPetro.getAccountList();
         userPetroAccountList.add(account);
         userPetro.setAccountList(userPetroAccountList);

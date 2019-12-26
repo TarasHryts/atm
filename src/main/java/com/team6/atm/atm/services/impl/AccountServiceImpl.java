@@ -24,7 +24,6 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public List<Account> getAllAccounts() {
-        logger.info(this.getClass().getName() + " get all account");
         return accountRepository.findAll();
     }
 

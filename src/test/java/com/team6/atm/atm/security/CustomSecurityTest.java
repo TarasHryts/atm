@@ -1,21 +1,21 @@
 package com.team6.atm.atm.security;
 
-        import org.junit.Test;
-        import org.junit.runner.RunWith;
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-        import org.springframework.boot.test.context.SpringBootTest;
-        import org.springframework.boot.test.web.client.TestRestTemplate;
-        import org.springframework.http.HttpStatus;
-        import org.springframework.http.ResponseEntity;
-        import org.springframework.test.context.junit4.SpringRunner;
-        import org.springframework.test.web.servlet.MockMvc;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-        import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-        import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-        import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-        import static org.junit.jupiter.api.Assertions.assertEquals;
-        import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -46,7 +46,7 @@ public class CustomSecurityTest {
     public void whenLoggedUserRequestsAccountTransfer_ThenSuccess()
             throws IllegalStateException {
         ResponseEntity<String> response
-                = restTemplateUser.getForEntity(URL_BASE + "/account/transfer", String.class);
+                = restTemplateUser.getForEntity(URL_BASE + "/accounts/transfer", String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -55,7 +55,7 @@ public class CustomSecurityTest {
     public void whenLoggedAdminRequestsGetAllAccounts_ThenSuccess()
             throws IllegalStateException {
         ResponseEntity<String> response
-                = restTemplateAdmin.getForEntity(URL_BASE + "/account/getallaccounts", String.class);
+                = restTemplateAdmin.getForEntity(URL_BASE + "/accounts/getallaccounts", String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -64,7 +64,7 @@ public class CustomSecurityTest {
     public void whenLoggedAdminRequestsAtmAdd_ThenSuccess()
             throws IllegalStateException {
         ResponseEntity<String> response
-                = restTemplateAdmin.getForEntity(URL_BASE + "/atm/add", String.class);
+                = restTemplateAdmin.getForEntity(URL_BASE + "/atms/add", String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -73,7 +73,7 @@ public class CustomSecurityTest {
     public void whenLoggedUserRequestsAtmDeposit_ThenSuccess()
             throws IllegalStateException {
         ResponseEntity<String> response
-                = restTemplateUser.getForEntity(URL_BASE + "/atm/deposit", String.class);
+                = restTemplateUser.getForEntity(URL_BASE + "/atms/deposit", String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -82,14 +82,14 @@ public class CustomSecurityTest {
     public void whenLoggedAdminRequestsUserAll_ThenSuccess()
             throws IllegalStateException {
         ResponseEntity<String> response
-                = restTemplateAdmin.getForEntity(URL_BASE + "/user/all", String.class);
+                = restTemplateAdmin.getForEntity(URL_BASE + "/users/all", String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     public void whenLoggedUserRequestsUserAll_ThenForbidden() throws Exception {
-        mockMvc.perform(post(URL_BASE + "/user/all")
+        mockMvc.perform(post(URL_BASE + "/users/all")
                 .accept("application/json")
                 .contentType("application/json")
                 .with(csrf())
@@ -99,7 +99,7 @@ public class CustomSecurityTest {
 
     @Test
     public void whenAnyUserRequestsUserAdd_ThenForbidden() throws Exception {
-        mockMvc.perform(post(URL_BASE + "/user/add")
+        mockMvc.perform(post(URL_BASE + "/users/add")
                 .accept("application/json")
                 .contentType("application/json")
                 .with(csrf())
@@ -109,7 +109,7 @@ public class CustomSecurityTest {
 
     @Test
     public void whenAnyUserRequestsAccountAdd_ThenForbidden() throws Exception {
-        mockMvc.perform(post(URL_BASE + "/account/add")
+        mockMvc.perform(post(URL_BASE + "/accounts/add")
                 .accept("application/json")
                 .contentType("application/json")
                 .with(csrf())
@@ -119,7 +119,7 @@ public class CustomSecurityTest {
 
     @Test
     public void whenAnyUserRequestsAtmAdd_ThenForbidden() throws Exception {
-        mockMvc.perform(post(URL_BASE + "/atm/add")
+        mockMvc.perform(post(URL_BASE + "/atms/add")
                 .accept("application/json")
                 .contentType("application/json")
                 .with(csrf())
@@ -129,7 +129,7 @@ public class CustomSecurityTest {
 
     @Test
     public void whenLoggedUserRequestsAccountAll_ThenForbidden() throws Exception {
-        mockMvc.perform(post(URL_BASE + "/account/all")
+        mockMvc.perform(post(URL_BASE + "/accounts/all")
                 .accept("application/json")
                 .contentType("application/json")
                 .with(csrf())
@@ -139,7 +139,7 @@ public class CustomSecurityTest {
 
     @Test
     public void whenLoggedUserRequestsAtmAdd_ThenForbidden() throws Exception {
-        mockMvc.perform(post(URL_BASE + "/atm/add")
+        mockMvc.perform(post(URL_BASE + "/atms/add")
                 .accept("application/json")
                 .contentType("application/json")
                 .with(csrf())

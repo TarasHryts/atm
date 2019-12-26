@@ -25,14 +25,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/atm")
+@RequestMapping("/atms")
 @Api(value = "ATM", description = "Operations")
 public class AtmController {
-    @Autowired
     private AtmService atmService;
+    private AccountService accountService;
 
     @Autowired
-    private AccountService accountService;
+    public AtmController(AtmService atmService, AccountService accountService) {
+        this.atmService = atmService;
+        this.accountService = accountService;
+    }
 
     @ApiOperation(value = "add", response = List.class)
     @ApiResponses(value = {
@@ -65,7 +68,7 @@ public class AtmController {
     @PostMapping("/deposit")
     public void deposit(@RequestBody DepositMoneyInAtmDto depositMoneyInAtmDto) {
         List<Banknotes> banknotesList = new ArrayList<>();
-        for (BanknotesDto banknote :depositMoneyInAtmDto.getBanknotesList()) {
+        for (BanknotesDto banknote : depositMoneyInAtmDto.getBanknotesList()) {
             banknotesList.add(BanknotesDtoUtil.createBanknotesFromDto(banknote));
         }
         Account account = accountService.getById(depositMoneyInAtmDto.getAccountId()).orElseThrow(

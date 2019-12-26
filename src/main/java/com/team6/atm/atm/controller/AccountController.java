@@ -26,14 +26,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/accounts")
 public class AccountController {
-    @Autowired
+
     private AccountService accountService;
-    @Autowired
     private UserService userService;
+
     @Autowired
-    private AccountDtoUtil accountDtoUtil;
+    public AccountController(AccountService accountService, UserService userService) {
+        this.accountService = accountService;
+        this.userService = userService;
+    }
 
     @PostMapping("/add")
     @ApiOperation(value = "add", response = List.class)
@@ -48,7 +51,7 @@ public class AccountController {
                     message = "The resource you were trying to reach is not found")
     })
     public void add(@RequestParam("userId") Long userId, @RequestBody AccountDto accountDto) {
-        Account account = accountDtoUtil.createAccountFromDto(accountDto);
+        Account account = AccountDtoUtil.createAccountFromDto(accountDto);
         accountService.create(account);
         User user = userService.getUserById(userId).orElseThrow();
         Set<Account> accountList = user.getAccountList();
